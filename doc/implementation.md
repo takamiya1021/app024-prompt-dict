@@ -81,7 +81,7 @@
 - **Green**: ヘッダーUI実装
 - **Refactor**: レイアウト調整
 
-#### 【 】2-2. CharacterCardコンポーネント（2時間）
+#### 【x】2-2. CharacterCardコンポーネント（2時間）
 - **Red**: カード表示テスト
 - **Green**: サムネイル、タグ、コピーボタン実装
 - **Refactor**: React.memo適用
