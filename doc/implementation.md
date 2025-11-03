@@ -86,7 +86,7 @@
 - **Green**: サムネイル、タグ、コピーボタン実装
 - **Refactor**: React.memo適用
 
-#### 【 】2-3. CharacterGridコンポーネント（2時間）
+#### 【x】2-3. CharacterGridコンポーネント（2時間）
 - **Red**: グリッドレイアウトテスト
 - **Green**: レスポンシブグリッド実装
 - **Refactor**: パフォーマンス最適化
