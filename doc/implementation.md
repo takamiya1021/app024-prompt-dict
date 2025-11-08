@@ -150,7 +150,7 @@
 
 ### タスク
 
-#### 【 】5-1. JSON/CSVエクスポート（2時間）
+#### 【x】5-1. JSON/CSVエクスポート（2時間）
 - **Red**: エクスポートテスト
 - **Green**: `lib/exportUtils.ts` 実装
   ```typescript
