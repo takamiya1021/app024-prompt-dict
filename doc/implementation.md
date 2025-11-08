@@ -159,7 +159,7 @@
   ```
 - **Refactor**: フォーマット最適化
 
-#### 【 】5-2. ExportDialogコンポーネント（1時間）
+#### 【x】5-2. ExportDialogコンポーネント（1時間）
 - **Red**: ダイアログ表示テスト
 - **Green**: モーダルUI実装
 - **Refactor**: UX改善
