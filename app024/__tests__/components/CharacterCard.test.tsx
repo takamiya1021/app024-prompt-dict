@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CharacterCard from '../../app/components/CharacterCard';
 import type { Character } from '../../types';
@@ -44,21 +44,32 @@ describe('CharacterCard', () => {
     expect(screen.getByTestId('character-card')).toHaveAttribute('data-selected', 'true');
   });
 
-  it('handles prompt copy interaction', async () => {
-    const user = userEvent.setup();
-    const handleCopy = jest.fn();
+  it('handles prompt copy interaction and shows feedback', async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const handleCopy = jest.fn().mockResolvedValue(true);
 
-    render(
-      <CharacterCard
-        character={baseCharacter}
-        onSelect={jest.fn()}
-        onCopyPrompt={handleCopy}
-        selected={false}
-      />,
-    );
+    try {
+      render(
+        <CharacterCard
+          character={baseCharacter}
+          onSelect={jest.fn()}
+          onCopyPrompt={handleCopy}
+          selected={false}
+        />,
+      );
 
-    await user.click(screen.getByRole('button', { name: 'プロンプトをコピー' }));
+      await user.click(screen.getByRole('button', { name: 'プロンプトをコピー' }));
 
-    expect(handleCopy).toHaveBeenCalledWith(baseCharacter.id);
+      expect(handleCopy).toHaveBeenCalledWith(baseCharacter.id);
+      expect(await screen.findByText('コピーできたで！')).toBeInTheDocument();
+
+      await act(async () => {
+        jest.advanceTimersByTime(2500);
+      });
+      await waitFor(() => expect(screen.queryByText('コピーできたで！')).not.toBeInTheDocument());
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });

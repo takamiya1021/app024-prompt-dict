@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PromptPreview from '../../app/components/PromptPreview';
 
@@ -8,25 +8,34 @@ const SAMPLE_PROMPTS = {
 };
 
 describe('PromptPreview', () => {
-  it('renders current prompt and allows copying', async () => {
-    const user = userEvent.setup();
-    const handleCopy = jest.fn();
+  it('renders current prompt, copies, and shows feedback', async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const handleCopy = jest.fn().mockResolvedValue(true);
 
-    render(
-      <PromptPreview
-        prompts={SAMPLE_PROMPTS}
-        current="image"
-        onChangeTemplate={jest.fn()}
-        onCopy={handleCopy}
-        templates={[{ id: 'image', name: '画像用' }, { id: 'text', name: '文章用' }]}
-      />,
-    );
+    try {
+      render(
+        <PromptPreview
+          prompts={SAMPLE_PROMPTS}
+          current="image"
+          onChangeTemplate={jest.fn()}
+          onCopy={handleCopy}
+          templates={[{ id: 'image', name: '画像用' }, { id: 'text', name: '文章用' }]}
+        />,
+      );
 
-    expect(screen.getByText('image prompt text')).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'コピー' }));
 
-    await user.click(screen.getByRole('button', { name: 'コピー' }));
+      expect(handleCopy).toHaveBeenCalledWith('image prompt text');
+      expect(await screen.findByText('コピーしました')).toBeInTheDocument();
 
-    expect(handleCopy).toHaveBeenCalledWith('image prompt text');
+      await act(async () => {
+        jest.advanceTimersByTime(2500);
+      });
+      await waitFor(() => expect(screen.queryByText('コピーしました')).not.toBeInTheDocument());
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('switches templates when select changes', async () => {

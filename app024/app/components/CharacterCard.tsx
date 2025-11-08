@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import type { FC, MouseEvent, KeyboardEvent } from 'react';
 import clsx from 'clsx';
 import type { Character } from '../../types';
@@ -8,10 +9,15 @@ interface CharacterCardProps {
   character: Character;
   selected: boolean;
   onSelect: (id: string) => void;
-  onCopyPrompt: (id: string) => void;
+  onCopyPrompt: (id: string) => Promise<boolean | void> | boolean | void;
 }
 
+const COPY_FEEDBACK_DURATION = 2000;
+
 const CharacterCard: FC<CharacterCardProps> = ({ character, selected, onSelect, onCopyPrompt }) => {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleSelect = () => {
     onSelect(character.id);
   };
@@ -23,10 +29,26 @@ const CharacterCard: FC<CharacterCardProps> = ({ character, selected, onSelect, 
     }
   };
 
-  const handleCopy = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleCopy = async (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    onCopyPrompt(character.id);
+    const result = await onCopyPrompt(character.id);
+    if (result !== false) {
+      setCopied(true);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => setCopied(false), COPY_FEEDBACK_DURATION);
+    }
   };
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    },
+    [],
+  );
 
   return (
     <article
@@ -69,13 +91,20 @@ const CharacterCard: FC<CharacterCardProps> = ({ character, selected, onSelect, 
 
       <div className="mt-auto flex items-center justify-between pt-4">
         <span className="text-xs text-slate-500">更新: {character.updatedAt.toLocaleDateString()}</span>
-        <button
-          type="button"
-          className="rounded-full bg-purple-500 px-4 py-1 text-sm font-semibold text-white transition hover:bg-purple-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-300"
-          onClick={handleCopy}
-        >
-          プロンプトをコピー
-        </button>
+        <div className="flex items-center gap-2">
+          {copied ? (
+            <span className="text-xs text-green-300" role="status">
+              コピーできたで！
+            </span>
+          ) : null}
+          <button
+            type="button"
+            className="rounded-full bg-purple-500 px-4 py-1 text-sm font-semibold text-white transition hover:bg-purple-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-300"
+            onClick={handleCopy}
+          >
+            プロンプトをコピー
+          </button>
+        </div>
       </div>
     </article>
   );
