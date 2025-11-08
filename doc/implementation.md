@@ -102,7 +102,7 @@
 - **Green**: リアルタイムプレビュー実装
 - **Refactor**: テンプレート切り替え
 
-#### 【 】2-6. SearchBar & TagFilterコンポーネント（1時間）
+#### 【x】2-6. SearchBar & TagFilterコンポーネント（1時間）
 - **Red**: 検索・フィルターテスト
 - **Green**: 検索バー、タグフィルターUI実装
 - **Refactor**: リアルタイムフィルタリング
