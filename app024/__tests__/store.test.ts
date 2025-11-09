@@ -87,6 +87,45 @@ describe('useCharacterStore', () => {
     expect(restored.name).toBe('テストキャラ');
   });
 
+  it('keeps only the latest 10 version snapshots', () => {
+    const character = createCharacter();
+
+    act(() => {
+      useCharacterStore.getState().addCharacter(character);
+    });
+
+    for (let i = 0; i < 12; i += 1) {
+      // 保存してから名前を更新しバージョンを進める
+      act(() => {
+        useCharacterStore.getState().saveVersion(character.id, `v${i}`);
+        useCharacterStore.getState().updateCharacter(character.id, {
+          name: `キャラ${i}`,
+        });
+      });
+    }
+
+    const history = useCharacterStore.getState().characters[0].versionHistory ?? [];
+    expect(history).toHaveLength(10);
+    expect(history[0].changeDescription).toBe('v2');
+    expect(history[history.length - 1].changeDescription).toBe('v11');
+  });
+
+  it('restoring creates a new version entry', () => {
+    const character = createCharacter();
+
+    act(() => {
+      useCharacterStore.getState().addCharacter(character);
+      useCharacterStore.getState().saveVersion(character.id, '初期版');
+      useCharacterStore.getState().updateCharacter(character.id, { name: '更新版' });
+      useCharacterStore.getState().restoreVersion(character.id, 1);
+    });
+
+    const restored = useCharacterStore.getState().characters[0];
+    expect(restored.name).toBe('テストキャラ');
+    expect(restored.version).toBeGreaterThan(2);
+    expect(restored.versionHistory?.length).toBeGreaterThan(0);
+  });
+
   it('manages prompt templates', () => {
     const template = createTemplate();
 

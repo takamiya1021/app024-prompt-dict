@@ -52,6 +52,16 @@ const toSnapshot = (character: Character): CharacterSnapshot => {
   return snapshot;
 };
 
+const MAX_VERSION_HISTORY = 10;
+
+const appendVersionEntry = (history: CharacterVersion[], entry: CharacterVersion): CharacterVersion[] => {
+  const next = [...history, entry];
+  if (next.length > MAX_VERSION_HISTORY) {
+    return next.slice(next.length - MAX_VERSION_HISTORY);
+  }
+  return next;
+};
+
 const normaliseVersionHistory = (history?: CharacterVersion[]): CharacterVersion[] | undefined =>
   history?.map((entry) => ({
     ...entry,
@@ -183,7 +193,7 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
 
         return {
           ...character,
-          versionHistory: [...history, versionEntry],
+          versionHistory: appendVersionEntry(history, versionEntry),
         };
       }),
     })),
@@ -198,12 +208,20 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
         if (!entry) {
           return character;
         }
+        const now = new Date();
+        const snapshotBeforeRestore: CharacterVersion = {
+          version: character.version,
+          character: toSnapshot(character),
+          changedAt: now,
+          changeDescription: 'restore-point',
+        };
 
         return {
           ...character,
           ...entry.character,
-          version: entry.version,
-          updatedAt: new Date(),
+          version: character.version + 1,
+          updatedAt: now,
+          versionHistory: appendVersionEntry(character.versionHistory, snapshotBeforeRestore),
         };
       }),
     })),
