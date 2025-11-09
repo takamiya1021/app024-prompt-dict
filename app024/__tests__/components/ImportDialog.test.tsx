@@ -21,6 +21,10 @@ describe('ImportDialog', () => {
       },
     ];
     const file = new File([JSON.stringify(characters)], 'characters.json', { type: 'application/json' });
+    Object.defineProperty(file, 'text', {
+      configurable: true,
+      value: jest.fn(() => Promise.resolve(JSON.stringify(characters))),
+    });
 
     render(<ImportDialog open onClose={jest.fn()} onImport={handleImport} />);
 
