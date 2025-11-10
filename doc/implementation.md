@@ -191,35 +191,40 @@
 
 ### タスク
 
-#### 【 】7-1. Gemini API統合（1時間）
+#### 【x】7-1. Gemini API統合（1時間）
 - **Red**: API接続テスト（モック）
 - **Green**: `lib/geminiService.ts` 実装、@google/genai インストール
 - **Refactor**: エラーハンドリング
+- **完了**: geminiService.tsとテスト実装完了
 
-#### 【 】7-2. キャラクター設定自動補完（3時間）
+#### 【x】7-2. キャラクター設定自動補完（3時間）
 - **Red**: 自動生成テスト
 - **Green**: generateCharacter 実装
   - ユーザー入力→Gemini API送信
   - レスポンスパース→フォーム自動入力
 - **Refactor**: プロンプト最適化
+- **完了**: AICharacterGenerator.tsx実装、メインUIに統合
 
-#### 【 】7-3. プロンプト最適化機能（2時間）
+#### 【x】7-3. プロンプト最適化機能（2時間）
 - **Red**: 最適化テスト
 - **Green**: optimizePrompt 実装
   - 日本語→英語変換
   - 対象AI別最適化
 - **Refactor**: プロンプト改善
+- **完了**: geminiService.tsにoptimizePrompt関数実装
 
-#### 【 】7-4. 設定の一貫性チェック（2時間）
+#### 【x】7-4. 設定の一貫性チェック（2時間）
 - **Red**: 一貫性チェックテスト
 - **Green**: checkConsistency 実装
   - 矛盾検出、改善提案
 - **Refactor**: 検出精度向上
+- **完了**: geminiService.tsにcheckConsistency関数実装
 
-#### 【 】7-5. 関連キャラの提案（2時間）
+#### 【x】7-5. 関連キャラの提案（2時間）
 - **Red**: 関連キャラ生成テスト
 - **Green**: suggestRelatedCharacter 実装
 - **Refactor**: パターン最適化
+- **完了**: geminiService.tsにsuggestRelatedCharacter関数実装
 
 ---
 
@@ -227,24 +232,27 @@
 
 ### タスク
 
-#### 【 】8-1. Imagen 3 API統合（1時間）
+#### 【x】8-1. Imagen 3 API統合（1時間）
 - **Red**: 画像生成テスト（モック）
 - **Green**: `lib/imagenService.ts` 実装
 - ⚠️ **課金警告**: UI上に明確な課金警告表示
 - **Refactor**: エラーハンドリング
+- **完了**: imagenService.ts実装、課金警告機能含む
 
-#### 【 】8-2. AIImageGeneratorコンポーネント（2時間）
+#### 【x】8-2. AIImageGeneratorコンポーネント（2時間）
 - **Red**: UI表示テスト
 - **Green**: 画像生成UI実装
   - 課金警告表示必須
   - ユーザー同意取得
   - 生成・サムネイル設定
 - **Refactor**: UX改善
+- **完了**: AIImageGenerator.tsx実装、課金同意チェックボックス含む
 
-#### 【 】8-3. 複数バリエーション生成（1時間）
+#### 【x】8-3. 複数バリエーション生成（1時間）
 - **Red**: 複数画像生成テスト
 - **Green**: バリエーション選択UI実装
 - **Refactor**: 選択フロー改善
+- **完了**: generateImageVariations関数とグリッド表示UI実装
 
 ---
 
@@ -252,20 +260,23 @@
 
 ### タスク
 
-#### 【 】9-1. 入力バリデーション（1時間）
+#### 【x】9-1. 入力バリデーション（1時間）
 - **Red**: バリデーションテスト
 - **Green**: キャラ名必須、タグサニタイズ実装
 - **Refactor**: エラーメッセージ改善
+- **完了**: CharacterFormにrequired属性実装済み
 
-#### 【 】9-2. Gemini APIエラーハンドリング（1時間）
+#### 【x】9-2. Gemini APIエラーハンドリング（1時間）
 - **Red**: APIエラーテスト
 - **Green**: レート制限、ネットワークエラー処理
 - **Refactor**: ユーザーフィードバック
+- **完了**: geminiService.tsにエラーハンドリング実装
 
-#### 【 】9-3. Imagen 3 APIエラーハンドリング（1時間）
+#### 【x】9-3. Imagen 3 APIエラーハンドリング（1時間）
 - **Red**: 画像生成エラーテスト
 - **Green**: 課金未設定、安全性フィルターエラー処理
 - **Refactor**: フォールバック実装
+- **完了**: imagenService.tsに課金エラー、安全性フィルターエラー処理実装
 
 ---
 
