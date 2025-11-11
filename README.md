@@ -18,7 +18,13 @@
 - 🔍 **検索・フィルター**: タグや名前で素早くキャラを検索
 - 💾 **エクスポート/インポート**: JSON/CSV形式でデータ共有
 - 📜 **バージョン管理**: キャラ設定の履歴保存・復元（最大10件）
-- 🖼️ **画像生成**: Imagen 3でキャラクター画像を生成（⚠️ 課金必須）
+- 🖼️ **AI画像生成・編集**: Imagen 4 & nano bananaで画像生成・編集
+
+### スクリーンショット
+
+![キャラクター詳細画面](app024/png/screenshot-character-detail.png)
+
+*キャラクター詳細画面 - プロンプト表示とコピー機能*
 
 ## 🚀 セットアップ
 
@@ -100,7 +106,7 @@ npm run build
 - **UI**: React 19, Tailwind CSS 4.x
 - **状態管理**: Zustand 5.x
 - **テスト**: Jest, React Testing Library, Playwright
-- **AI API**: @google/generative-ai
+- **AI API**: @google/genai (Gemini 2.0, Imagen 4, nano banana)
 
 ## 🧪 テスト
 
@@ -124,13 +130,25 @@ npm run test:coverage
 - **超過時**: GCP Billing未設定なら利用制限、設定済みなら従量課金
 - **用途**: キャラクター自動生成、プロンプト最適化、一貫性チェック
 
-### Imagen 3（画像生成）
+### AI画像生成・編集
 
-⚠️ **この機能は課金必須です（無料枠なし）**
+#### Imagen 4（高品質・新規生成）
 
-- **必要条件**: GCP Billing有効化必須
-- **料金**: 1画像あたり約$0.04 USD
+⚠️ **課金対象機能**
+
+- **モデル**: imagen-4.0-generate-001
+- **料金**: 1画像あたり$0.04 USD
+- **用途**: 新規画像生成のみ
 - **UI表示**: 明確な課金警告と同意チェックボックス
+
+#### nano banana（無料枠・生成＋編集）
+
+✅ **無料枠で利用可能**
+
+- **モデル**: gemini-2.5-flash-image-preview
+- **無料枠**: 25枚/日（5 RPM制限）
+- **用途**: 新規画像生成 ＋ 既存画像の編集
+- **編集機能**: 既存サムネイルを元に編集指示で修正可能
 
 ### APIキーの管理
 
@@ -167,7 +185,7 @@ app024/
 │   ├── exportUtils.ts      # JSON/CSV エクスポート
 │   ├── importUtils.ts      # JSON インポート・検証
 │   ├── geminiService.ts    # Gemini API統合
-│   └── imagenService.ts    # Imagen 3 API統合
+│   └── imagenService.ts    # Imagen 4 & nano banana API統合
 ├── store/                  # 状態管理
 │   └── useCharacterStore.ts # Zustand Store
 ├── types/                  # TypeScript型定義
