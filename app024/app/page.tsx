@@ -12,12 +12,13 @@ import ExportDialog from './components/ExportDialog';
 import ImportDialog from './components/ImportDialog';
 import VersionHistoryDialog from './components/VersionHistoryDialog';
 import AICharacterGenerator from './components/AICharacterGenerator';
+import AIImageGenerator from './components/AIImageGenerator';
 import ApiKeySettings from './components/ApiKeySettings';
 import { copyToClipboard } from '../lib/clipboard';
 import { buildPromptContext } from '../lib/promptGenerator';
 import type { Character } from '../types';
 
-type DialogMode = 'none' | 'create' | 'edit' | 'export' | 'import' | 'version' | 'ai-generate' | 'settings';
+type DialogMode = 'none' | 'create' | 'edit' | 'export' | 'import' | 'version' | 'ai-generate' | 'ai-image' | 'settings';
 
 export default function Home() {
   const [dialogMode, setDialogMode] = useState<DialogMode>('none');
@@ -204,9 +205,63 @@ export default function Home() {
       {(dialogMode === 'create' || dialogMode === 'edit') && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-slate-900 p-8 shadow-2xl">
-            <h2 className="mb-6 text-2xl font-bold text-white">
-              {dialogMode === 'create' ? '新規キャラクター作成' : 'キャラクター編集'}
-            </h2>
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">
+                {dialogMode === 'create' ? '新規キャラクター作成' : 'キャラクター編集'}
+              </h2>
+              {dialogMode === 'edit' && editingCharacter && (
+                <button
+                  type="button"
+                  onClick={() => setDialogMode('ai-image')}
+                  className="rounded-full bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:from-pink-700 hover:to-purple-700"
+                >
+                  🖼️ 画像生成
+                </button>
+              )}
+            </div>
+
+            {/* サムネイルプレビュー */}
+            {editingCharacter?.thumbnail && (
+              <div className="mb-6 flex flex-col items-center gap-3">
+                <div className="text-sm font-medium text-slate-300">現在のサムネイル</div>
+                <div className="relative h-48 w-48 overflow-hidden rounded-2xl border-2 border-purple-500/50 bg-slate-800">
+                  <img
+                    src={editingCharacter.thumbnail}
+                    alt={editingCharacter.name}
+                    className="h-full w-full object-cover"
+                  />
+                  {/* 削除ボタン */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editingCharacter) {
+                        updateCharacter(editingCharacter.id, {
+                          thumbnail: undefined,
+                          updatedAt: new Date(),
+                        });
+                      }
+                    }}
+                    className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500/90 text-white transition hover:bg-red-600"
+                    title="サムネイルを削除"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <p className="text-xs text-slate-400">✕ボタンで削除 / 🖼️画像生成で変更</p>
+              </div>
+            )}
+
             <CharacterForm
               initial={
                 editingCharacter
@@ -310,6 +365,37 @@ export default function Home() {
               </button>
             </div>
             <ApiKeySettings onClose={() => setDialogMode('none')} />
+          </div>
+        </div>
+      )}
+
+      {/* ダイアログ - AI画像生成 */}
+      {dialogMode === 'ai-image' && editingCharacter && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-slate-900 p-8 shadow-2xl">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">AI画像生成 - {editingCharacter.name}</h2>
+              <button
+                onClick={() => setDialogMode('edit')}
+                className="text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            <AIImageGenerator
+              character={editingCharacter}
+              onSelectImage={(imageData) => {
+                updateCharacter(editingCharacter.id, {
+                  thumbnail: imageData,
+                  updatedAt: new Date(),
+                });
+                setDialogMode('edit');
+                setCopyFeedback('画像を設定しました');
+                setTimeout(() => setCopyFeedback(null), 3000);
+              }}
+              apiKey={apiKey || undefined}
+              baseImage={editingCharacter.thumbnail}
+            />
           </div>
         </div>
       )}

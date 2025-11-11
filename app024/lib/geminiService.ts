@@ -3,20 +3,20 @@
  * キャラクター設定自動補完、プロンプト最適化、一貫性チェック、関連キャラ提案
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import type { Character } from '../types';
 
 /**
  * Gemini APIクライアント初期化
  */
-function getGeminiClient(apiKey?: string): GoogleGenerativeAI {
+function getGeminiClient(apiKey?: string): GoogleGenAI {
   const key = apiKey || process.env.GEMINI_API_KEY || (typeof window !== 'undefined' ? localStorage.getItem('gemini_api_key') : null);
 
   if (!key) {
     throw new Error('Gemini API key is not set');
   }
 
-  return new GoogleGenerativeAI(key);
+  return new GoogleGenAI({ apiKey: key });
 }
 
 /**
