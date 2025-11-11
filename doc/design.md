@@ -542,8 +542,49 @@ name,appearance,personality,background,tags
 - プロンプト履歴・使用統計
 - AI音声生成（キャラボイス）
 
-### 12.2 技術的改善
-- Service Worker（PWA化、オフライン対応）
+### 12.2 PWA実装（優先度：中）
+
+#### manifest.json
+```json
+{
+  "name": "キャラプロンプト辞書",
+  "short_name": "キャラ辞書",
+  "description": "キャラクター設定を一元管理し、AI画像生成やストーリー創作を効率化",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+```
+
+#### Service Worker戦略
+- **キャッシュファースト**: 静的アセット（CSS、JS、画像）
+- **ネットワークファースト**: API呼び出し（Gemini、Imagen）
+- **オフライン対応**: LocalStorageデータは常に利用可能
+- **キャッシュ更新**: 新バージョンデプロイ時に自動更新
+
+#### アイコン要件
+- **192x192px**: Android用アイコン
+- **512x512px**: スプラッシュスクリーン用
+- **形式**: PNG（透過背景推奨）
+- **デザイン**: ユーザー提供
+
+### 12.3 技術的改善（将来）
 - WebSocket（リアルタイム共同編集）
 - IndexedDB（大量キャラ管理）
 - クラウド同期（Firebase等）
