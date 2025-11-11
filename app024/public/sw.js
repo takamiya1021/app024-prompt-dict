@@ -1,7 +1,7 @@
 // Service Worker for キャラプロンプト辞書
-const CACHE_NAME = 'character-prompt-dict-v1';
-const STATIC_CACHE_NAME = 'static-v1';
-const RUNTIME_CACHE_NAME = 'runtime-v1';
+const CACHE_NAME = 'character-prompt-dict-v2';
+const STATIC_CACHE_NAME = 'static-v2';
+const RUNTIME_CACHE_NAME = 'runtime-v2';
 
 // 静的アセットのキャッシュリスト
 const STATIC_ASSETS = [
