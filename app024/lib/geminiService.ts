@@ -49,7 +49,6 @@ export async function generateCharacter(
   tags: string[];
 }> {
   const genAI = getGeminiClient(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
   const systemPrompt = `以下のキャラクター設定から、詳細なキャラクター情報を生成してください。
 
@@ -66,10 +65,21 @@ export async function generateCharacter(
 
 JSONのみを出力してください。説明文は不要です。`;
 
-  const result = await model.generateContent(systemPrompt);
-  const response = result.response;
-  const text = response.text();
+  const result = await genAI.models.generateContent({
+    model: 'gemini-2.0-flash-exp',
+    contents: { parts: [{ text: systemPrompt }] },
+  });
 
+  if (!result.candidates || result.candidates.length === 0) {
+    throw new Error('APIから候補が返されませんでした。');
+  }
+
+  const parts = result.candidates[0]?.content?.parts;
+  if (!parts || parts.length === 0) {
+    throw new Error('テキストデータがレスポンスに含まれていませんでした。');
+  }
+
+  const text = parts[0]?.text || '';
   return parseJSONResponse(text);
 }
 
@@ -86,7 +96,6 @@ export async function optimizePrompt(
   apiKey?: string
 ): Promise<string> {
   const genAI = getGeminiClient(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
   const aiInstructions: Record<typeof targetAI, string> = {
     'stable-diffusion': 'Stable Diffusion用に最適化（タグ形式、具体的な描写、品質タグを含む）',
@@ -107,9 +116,21 @@ export async function optimizePrompt(
 ${targetAI}で画像生成する際に最適な英語プロンプトを生成してください。
 プロンプトのみを出力し、説明文は不要です。`;
 
-  const result = await model.generateContent(systemPrompt);
-  const response = result.response;
-  return response.text().trim();
+  const result = await genAI.models.generateContent({
+    model: 'gemini-2.0-flash-exp',
+    contents: { parts: [{ text: systemPrompt }] },
+  });
+
+  if (!result.candidates || result.candidates.length === 0) {
+    throw new Error('APIから候補が返されませんでした。');
+  }
+
+  const parts = result.candidates[0]?.content?.parts;
+  if (!parts || parts.length === 0) {
+    throw new Error('テキストデータがレスポンスに含まれていませんでした。');
+  }
+
+  return (parts[0]?.text || '').trim();
 }
 
 /**
@@ -127,7 +148,6 @@ export async function checkConsistency(
   suggestions: string[];
 }> {
   const genAI = getGeminiClient(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
   const systemPrompt = `以下のキャラクター設定に矛盾や不自然な点がないかチェックしてください。
 
@@ -144,10 +164,21 @@ ${JSON.stringify(character, null, 2)}
 問題がない場合は、issuesとsuggestionsを空配列にしてください。
 JSONのみを出力してください。説明文は不要です。`;
 
-  const result = await model.generateContent(systemPrompt);
-  const response = result.response;
-  const text = response.text();
+  const result = await genAI.models.generateContent({
+    model: 'gemini-2.0-flash-exp',
+    contents: { parts: [{ text: systemPrompt }] },
+  });
 
+  if (!result.candidates || result.candidates.length === 0) {
+    throw new Error('APIから候補が返されませんでした。');
+  }
+
+  const parts = result.candidates[0]?.content?.parts;
+  if (!parts || parts.length === 0) {
+    throw new Error('テキストデータがレスポンスに含まれていませんでした。');
+  }
+
+  const text = parts[0]?.text || '';
   return parseJSONResponse(text);
 }
 
@@ -164,7 +195,6 @@ export async function suggestRelatedCharacter(
   apiKey?: string
 ): Promise<Omit<Character, 'id' | 'createdAt' | 'updatedAt' | 'version'>> {
   const genAI = getGeminiClient(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
   const relationDescriptions: Record<typeof relation, string> = {
     friend: '親友',
@@ -193,10 +223,21 @@ ${relationDescriptions[relation]}として適切なキャラクターを、以�
 
 JSONのみを出力してください。説明文は不要です。`;
 
-  const result = await model.generateContent(systemPrompt);
-  const response = result.response;
-  const text = response.text();
+  const result = await genAI.models.generateContent({
+    model: 'gemini-2.0-flash-exp',
+    contents: { parts: [{ text: systemPrompt }] },
+  });
 
+  if (!result.candidates || result.candidates.length === 0) {
+    throw new Error('APIから候補が返されませんでした。');
+  }
+
+  const parts = result.candidates[0]?.content?.parts;
+  if (!parts || parts.length === 0) {
+    throw new Error('テキストデータがレスポンスに含まれていませんでした。');
+  }
+
+  const text = parts[0]?.text || '';
   const generated = parseJSONResponse(text);
 
   return {
