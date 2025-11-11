@@ -19,6 +19,7 @@
 - 💾 **エクスポート/インポート**: JSON/CSV形式でデータ共有
 - 📜 **バージョン管理**: キャラ設定の履歴保存・復元（最大10件）
 - 🖼️ **AI画像生成・編集**: Imagen 4 & nano bananaで画像生成・編集
+- 📱 **PWA対応**: ホーム画面追加、オフライン動作、アプリライクな起動
 
 ### スクリーンショット
 
@@ -48,6 +49,15 @@ npm run dev
 ```
 
 開発サーバーが起動したら、ブラウザで `http://localhost:3000` を開いてください。
+
+### PWAアイコン設定（オプション）
+
+PWA機能を利用する場合、以下のアイコンを `app024/public/` に配置してください：
+
+- `icon-192x192.png` - 192x192ピクセル（Android用）
+- `icon-512x512.png` - 512x512ピクセル（スプラッシュスクリーン用）
+
+アイコンがない場合でも、アプリは正常に動作します（デフォルトアイコンが表示されます）。
 
 ### ビルド
 
@@ -98,6 +108,29 @@ npm run build
 
 #### インポート
 - **インポート**ボタン → JSONファイルを選択 → インポート
+
+### 5. PWA機能の利用
+
+#### ホーム画面に追加
+
+**Android（Chrome）**:
+1. ブラウザでアプリを開く
+2. メニュー（︙）→「ホーム画面に追加」
+3. アプリ名を確認して「追加」
+
+**iOS（Safari）**:
+1. Safariでアプリを開く
+2. 共有ボタン → 「ホーム画面に追加」
+3. アプリ名を確認して「追加」
+
+**デスクトップ（Chrome）**:
+1. アドレスバー右のインストールアイコン（⊕）をクリック
+2. 「インストール」をクリック
+
+#### オフライン利用
+
+- インストール後、ネット接続なしでもLocalStorageのデータにアクセス可能
+- AI機能はオンライン時のみ利用可能
 
 ## ⚙️ 技術スタック
 
@@ -174,9 +207,15 @@ app024/
 │   │   ├── VersionHistoryDialog.tsx
 │   │   ├── AICharacterGenerator.tsx
 │   │   ├── ApiKeySettings.tsx
-│   │   └── AIImageGenerator.tsx
+│   │   ├── AIImageGenerator.tsx
+│   │   └── RegisterSW.tsx
 │   ├── page.tsx            # メインページ
 │   └── layout.tsx          # ルートレイアウト
+├── public/                 # 静的ファイル
+│   ├── manifest.json       # PWA manifest
+│   ├── sw.js               # Service Worker
+│   ├── icon-192x192.png    # PWAアイコン（192x192）
+│   └── icon-512x512.png    # PWAアイコン（512x512）
 ├── lib/                    # ビジネスロジック
 │   ├── promptGenerator.ts  # プロンプト生成
 │   ├── templateEngine.ts   # テンプレート置換
